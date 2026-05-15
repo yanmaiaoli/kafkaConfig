@@ -17,47 +17,40 @@ Verifique se os 3 containers estão no ar:
 docker compose ps
 ```
 
-## Teste rápido (criar tópico, produzir e consumir)
 1. Criar um tópico:
 
 ```bash
-docker exec -it kafka-1 /opt/kafka/bin/kafka-topics.sh \
-  --create --topic audio-monitoring --partitions 3 --replication-factor 3 \
-  --bootstrap-server localhost:9092
-
-# Verificar tópico
-docker exec kafka-1 /opt/kafka/bin/kafka-topics.sh --list \
-  --bootstrap-server localhost:9092
-```
-
-2. Consumidor (em um terminal):
-
-```bash
-docker exec -it kafka-1 /opt/kafka/bin/kafka-console-consumer.sh \
-  --topic lab-topico --from-beginning --bootstrap-server localhost:9092
-```
-
-3. Produtor (em outro terminal):
-
-```bash
-docker exec -it kafka-1 /opt/kafka/bin/kafka-console-producer.sh \
-  --topic lab-topico --bootstrap-server localhost:9092
-```
-
-Digite mensagens no produtor e veja chegando no consumidor.
-
-## Bootstrap servers para clientes externos
-- `localhost:19092`
-- `localhost:29092`
-- `localhost:39092`
-
-## Parar o ambiente
-```bash
-docker compose down
+docker exec kafka-1 /opt/kafka/bin/kafka-topics.sh --create \
+  --topic audio-monitoring \
+  --bootstrap-server 172.23.168.107:19092 \
+  --partitions 3 \
+  --replication-factor 3
 ```
 
 Para remover também os volumes (dados):
 
 ```bash
 docker compose down -v
+```
+
+Para remover dados residuais:
+
+```bash
+ docker volume prune -f
+```
+
+Para lista topico
+
+```bash
+docker exec kafka-1 /opt/kafka/bin/kafka-topics.sh --describe \
+  --topic audio-monitoring \
+  --bootstrap-server 172.23.168.107:19092
+```
+
+Deletar topico
+
+```bash
+docker exec kafka-1 /opt/kafka/bin/kafka-topics.sh --delete \
+  --topic audio-monitoring \
+  --bootstrap-server 172.23.168.107:19092
 ```
